@@ -4,16 +4,19 @@ const mongoose = require('mongoose');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+ 
+const database_url = 'mongodb://localhost:27017/appointment';
+mongoose.connect(database_url);
+const db =mongoose.connection;
+db.on('error',(err)=>{
+  console.log(err)
+})
+db.once('open',()=>{
+  console.log('Database is running.')
+})
 
-// Use bodyParser middleware to parse request bodies
-app.use(bodyParser.urlencoded({ extended: false }));
-
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/appointment', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 // Define schema and model for appointment bookings
 const appointmentSchema = new mongoose.Schema({
   phone_number: String,
